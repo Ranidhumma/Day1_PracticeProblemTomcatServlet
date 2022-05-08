@@ -14,7 +14,7 @@ import java.io.PrintWriter;
         urlPatterns = {"/LoginServlet"},
         initParams = {
                 @WebInitParam(name = "user", value = "Rani"),
-                @WebInitParam(name = "password", value = "Dhumma")
+                @WebInitParam(name = "password", value = "rani@12345")
         }
 )
 public class LoginServlet extends HttpServlet {
@@ -26,22 +26,40 @@ public class LoginServlet extends HttpServlet {
         //get servlet config init params
         String userID = getServletConfig().getInitParameter("user");
         String password = getServletConfig().getInitParameter("password");
+        //regex for username and password
         String userRegex = "^[A-Z]{1}.{2,}$";//username regex
         /*
-         * Checking for Username regex atleast one upper case and min 3 characters
+         *Checking regex pattern for UserName atleast one upper case min 3 characters
          */
         if (!user.matches(userRegex)) {
-
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
             PrintWriter out = response.getWriter();
             out.println("<font color=red>Kindly Enter Correct user name</font>");
-            rd.include(request, response);
         }
+
+        String passwordRegex = "^(?=.*[0-9])"
+                + "(?=.*[a-z])(?=.*[A-Z])"
+                + "(?=.*[@#$%^&+=])"
+                + "(?=\\S+$).{8,20}$";
+        /*
+        Checking regex pattern for password
+         */
+        if (!pwd.matches(passwordRegex)) {
+            PrintWriter out = response.getWriter();
+            out.println("<font color=red>Kindly Enter Correct password</font>");
+        }
+
 
         if (userID.equals(user) && password.equals(pwd)) {
             request.setAttribute("user", user);
             request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
+        } else {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+            PrintWriter out = response.getWriter();
+            if (!userID.equals(user))
+                out.println("<font color=red>  user name is wrong.</font>");
+            if (!password.equals(pwd))
+                out.println("<font color=red>  password is wrong.</font>");
+            rd.include(request, response);
         }
-    }
 
-}
+    }}
