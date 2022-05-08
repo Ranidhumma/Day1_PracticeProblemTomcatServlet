@@ -26,14 +26,21 @@ public class LoginServlet extends HttpServlet {
         //get servlet config init params
         String userID = getServletConfig().getInitParameter("user");
         String password = getServletConfig().getInitParameter("password");
-        if(userID.equals(user) && password.equals(pwd)){
-            request.setAttribute("user",user);
-            request.getRequestDispatcher("LoginSuccess.jsp").forward(request,response);
-        }else {
+        String userRegex = "^[A-Z]{1}.{2,}$";//username regex
+        /*
+         * Checking for Username regex atleast one upper case and min 3 characters
+         */
+        if (!user.matches(userRegex)) {
+
             RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
             PrintWriter out = response.getWriter();
-            out.println("<font color=red> Either user name or password is wrong.</font>");
-            rd.include(request,response);
+            out.println("<font color=red>Kindly Enter Correct user name</font>");
+            rd.include(request, response);
+        }
+
+        if (userID.equals(user) && password.equals(pwd)) {
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
         }
     }
 
